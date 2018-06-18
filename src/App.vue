@@ -259,8 +259,12 @@
               }), vm)
           })
         , vm)
-          .then((data) => {
-
+      },
+      loadWeb () {
+        debugger
+        Promise.resolve(services.web.getScreenshot(this.parametros.idNoticia)).then((response) => {
+            this.noticiaAtual.screenshot = response.data
+            this.$forceUpdate()
           })
       },
       loadNoticia () {
@@ -270,6 +274,9 @@
             this.items[1].value = moment(this.noticiaAtual.DataHora).format("DD/MM/YYYY")
             if (this.noticiaAtual.IdMidia === 2) {
               this.loadImpresso()
+            }
+            if (this.noticiaAtual.IdMidia === 1) {
+              this.loadWeb()
             }
           })
       },

@@ -1,7 +1,7 @@
 import { axiosInstance } from './axiosInstance'
 
 function getScreenshot (idNoticia) {
-  axiosInstance.get(`Screenshot/Get?idNoticia=${idNoticia}`)
+  return axiosInstance.get(`Screenshot/Get?idNoticia=${idNoticia}&reprocessar=false`)
     .then(function (response) {
       return response.data
     })
