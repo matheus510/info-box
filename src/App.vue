@@ -6,23 +6,10 @@
       right
       app
       hide-overlay
-      @click="miniVariant = !miniVariant"
+      
+      v-model="miniVariant"
     >
-      <!-- <v-list>
-        <v-list-tile 
-          value="true"
-          v-for="(item, i) in items"
-          :key="i"
-        >
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list> -->
-      <v-list two-line>
+      <v-list two-line @click="miniVariant = !miniVariant">
         <v-list-tile v-for="item in items" :key="item.title">
           <v-list-tile-avatar>
             <v-icon>{{ item.icon }}</v-icon>
@@ -37,6 +24,9 @@
     <v-toolbar fixed app>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+        <v-btn icon v-if="miniVariant === false" @click.stop="miniVariant = !miniVariant">
+          <v-icon>chevron_right</v-icon>
+        </v-btn>
     </v-toolbar>
     <v-content>
       <v-container grid-list-xl text-xs-center>
