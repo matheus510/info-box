@@ -23,7 +23,7 @@ function getPaginas (idNoticia) {
 function getCapa (idNoticia) {
   return axiosInstance.get(`pagina/capa/${idNoticia}`)
     .then(function (response) {
-      axiosInstance.get(`pagina/PaginaById/${response.data}`)
+      return axiosInstance.get(`pagina/PaginaById/${response.data}`)
       .then(function (response) {
         return response.data
       })

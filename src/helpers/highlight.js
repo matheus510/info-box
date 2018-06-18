@@ -1,6 +1,6 @@
 function highlight (conteudo, terms) {
   let newStr = ''
-  debugger
+  
   if(terms && terms.length) {
     terms.sort(function(a, b) {
       return b.length - a.length

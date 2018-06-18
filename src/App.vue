@@ -68,7 +68,23 @@
             <v-flex xs8 offset-xs2 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
+                  <div v-for="imagem in parametros.listaPaginasRecorte" :key="imagem.Url">
+                    <img v-for="recorte in imagem.Recortes" :src="recorte.Url" :key="recorte.Url" />
+                  </div>
+                </div>
+              </v-card>
+            </v-flex>
+            <v-flex xs8 offset-xs2 v-if="abaAtual === 2 && noticiaAtual.IdMidia === 2">
+              <v-card class="py-3 px-4 text-xs-left">
+                <div class="viewer" v-viewer>
                   <img v-for="imagem in parametros.listaPaginasRecorte" :src="imagem.Url" :key="imagem.Url" />
+                </div>
+              </v-card>
+            </v-flex>
+            <v-flex xs8 offset-xs2 v-if="abaAtual === 3 && noticiaAtual.IdMidia === 2">
+              <v-card class="py-3 px-4 text-xs-left">
+                <div class="viewer" v-viewer>
+                  <img :src="noticiaAtual.capa.Url"/>
                 </div>
               </v-card>
             </v-flex>
@@ -113,6 +129,7 @@
           </v-layout>
         </v-slide-y-transition>
       </v-container>
+      <canvas id="canvas"></canvas>
     </v-content>
     <v-footer app>
       <span>&copy; 2017</span>
@@ -130,7 +147,7 @@
       return {
         items: [
           { icon: 'library_books', title: 'Visualizações', value: '12'},
-          { icon: 'calendar_today', title: 'Publicação', value: '21/05/2018'},
+          { icon: 'calendar_today', title: 'Publicação', value: 0},
           { icon: 'attach_money', title: 'Valor', value: '24.227,53'},
           { icon: 'format_shapes', title: 'Centimetragem', value: '24.11'},
           { icon: 'assessment', title: 'Audiência da matéria', value: '108'}
@@ -147,14 +164,14 @@
     },
     computed: {
       dataVeiculacao () {
-        return moment(this.noticiaAtual.DataHora).format("dddd, MMMM D YYYY, h:mm:ss a")
+        return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm:ss a")
       }
     },
     methods: {
       getParametrosMvc () {
         this.urlToken = window.location.href.split('=')[1]
         
-        return Promise.resolve(services.descriptografar(this.urlToken)).then((data) => {
+        return Promise.resolve(services.common.descriptografar(this.urlToken)).then((data) => {
           this.stringParametros = data
           const expressao = new RegExp('([^=&?]+)=([^&]+)', 'g')
           this.arrayParametros = this.stringParametros.match(expressao)
@@ -165,11 +182,11 @@
         })
       },
       loadPropriedadesMvc () {
-        return Promise.resolve(services.getPropriedadesMvc(this.parametros.idProdutoMvc))
+        return Promise.resolve(services.common.getPropriedadesMvc(this.parametros.idProdutoMvc))
           .then((data) => {
             this.parametros.idProduto = data.IdProduto
             this.parametros.propriedadesMvc = data
-            Promise.resolve(services.getDadosVisualizacao(this.parametros.idNoticia, this.parametros.idProdutoMvc, this.parametros.idProduto))
+            Promise.resolve(services.common.getDadosVisualizacao(this.parametros.idNoticia, this.parametros.idProdutoMvc, this.parametros.idProduto))
               .then((data) => {
             let vm = this
             let dados = data          
@@ -181,13 +198,41 @@
               if (vm.parametros.grifos && vm.noticiaAtual.Conteudo) {
                 vm.noticiaAtual.Conteudo = helpers.highlight(vm.noticiaAtual.Conteudo, vm.parametros.grifos)
               }
+              if (vm.parametros.opcoes['OpcaoExposicaoMesa'] && vm.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
+                Promise.resolve(services.common.getExposicao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia, vm.parametros.opcoes['centimetragemWeb']))
+                  .then((data) => {
+                    vm.noticiaAtual.exposicao = data
+                    vm.items[3].value = vm.noticiaAtual.exposicao.Exposicao.substring(14, vm.noticiaAtual.exposicao.Exposicao.length)
+                  })
+            }
+            if (vm.parametros.opcoes['OpcaoExposicaoPorCanal'] && vm.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
+                Promise.resolve(services.common.getExposicaoCanal(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.parametros.idMidia))
+                  .then((data) => {
+                    vm.noticiaAtual.exposicao = data
+                    vm.items[3].value = vm.noticiaAtual.exposicao.Exposicao.substring(14, vm.noticiaAtual.exposicao.Exposicao.length)
+                  })
+            }
+            if (vm.parametros.opcoes['OpcaoTiragemVisualizacaoBook']) {
+                Promise.resolve(services.common.getTiragem(vm.parametros.idNoticia))
+                  .then((data) => {
+                    vm.noticiaAtual.tiragem = data
+                    vm.items[4].value = vm.noticiaAtual.tiragem
+                  })
+            }
+            if (vm.parametros.opcoes['OpcaoValoracaoVisualizacaoBook']) {
+                Promise.resolve(services.common.getValoracao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia))
+                  .then((data) => {
+                    vm.noticiaAtual.valoracao = data
+                    vm.items[2].value = vm.noticiaAtual.valoracao ? vm.noticiaAtual.valoracao : 'Informação não disponível' 
+                  })
+            }
             }, 2000, vm, dados)
               })
           })
       },
       loadIdNoticiasBook () {
         if (this.parametros.idBook) {
-          Promise.resolve(services.getIdNoticiasBook(this.parametros.idBook))
+          Promise.resolve(services.common.getIdNoticiasBook(this.parametros.idBook))
             .then((data) => {
               this.parametros.idNoticiasBook = data
             })
@@ -202,18 +247,27 @@
             vm.parametros.listaIdsPaginas = response.Paginas
             vm.parametros.listaIdsPaginas.map((pagina, index) => {
               Promise.resolve(services.impresso.getPaginaComRecortes(pagina)
-              .then((response) => {
-                vm.parametros.listaPaginasRecorte.push(response)
+                .then((response) => {
+                  vm.parametros.listaPaginasRecorte.push(response)
+                  vm.$forceUpdate()
+                }), vm)
+            })
+            Promise.resolve(services.impresso.getCapa(vm.parametros.idNoticia)
+              .then((data) => {
+                vm.noticiaAtual.capa = data
                 vm.$forceUpdate()
               }), vm)
-            })
           })
         , vm)
+          .then((data) => {
+
+          })
       },
       loadNoticia () {
-        Promise.resolve(services.getNoticia(this.parametros.idProdutoMvc, this.parametros.idNoticia, false))
+        Promise.resolve(services.common.getNoticia(this.parametros.idProdutoMvc, this.parametros.idNoticia, false))
           .then((data) => {
             this.noticiaAtual = data
+            this.items[1].value = moment(this.noticiaAtual.DataHora).format("DD/MM/YYYY")
             if (this.noticiaAtual.IdMidia === 2) {
               this.loadImpresso()
             }
