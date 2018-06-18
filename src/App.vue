@@ -67,13 +67,15 @@
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
-                <img class="img-limit" v-for="imagem in parametros.listaPaginasRecorte" :key="imagem[imagem.Url]" :src="imagem.Url" />
+                <div class="viewer" v-viewer>
+                  <img v-for="imagem in parametros.listaPaginasRecorte" :src="imagem.Url" :key="imagem.Url" />
+                </div>
               </v-card>
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="abaAtual === 4 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <v-card-text class="py-3 justify">
-                  <span class="mx-4 px-4 subheading">{{ noticiaAtual.Conteudo }}</span>
+                  <span v-html="noticiaAtual.Conteudo" class="mx-4 px-4 subheading"></span>
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -120,6 +122,7 @@
 
 <script>
   import services from './services/'
+  import helpers from './helpers/'
   import moment from 'moment'
   moment.locale('pt-BR')
   export default {
@@ -175,6 +178,9 @@
               vm.parametros.fontesRestritas = dados.fontesRestritas
               vm.parametros.noticiasSimilares = dados.noticiasSimilares
               vm.parametros.opcoes = dados.opcoes
+              if (vm.parametros.grifos && vm.noticiaAtual.Conteudo) {
+                vm.noticiaAtual.Conteudo = helpers.highlight(vm.noticiaAtual.Conteudo, vm.parametros.grifos)
+              }
             }, 2000, vm, dados)
               })
           })
@@ -197,7 +203,6 @@
             vm.parametros.listaIdsPaginas.map((pagina, index) => {
               Promise.resolve(services.impresso.getPaginaComRecortes(pagina)
               .then((response) => {
-                debugger
                 vm.parametros.listaPaginasRecorte.push(response)
                 vm.$forceUpdate()
               }), vm)
@@ -213,6 +218,13 @@
               this.loadImpresso()
             }
           })
+      },
+      inited (viewer) {
+        this.$viewer = viewer
+        this.$viewer.show()
+      },
+      show () {
+        this.$viewer.show()
       }
     },
     mounted () {
@@ -225,7 +237,12 @@
   }
 </script>
 <style>
-.img-limit {
-  max-height: 80% !important;
+.viewer img{
+  width: 100%;
+  height: auto;
+}
+mark {
+  background-color: #ffff00;
+  padding: 0;
 }
 </style>
