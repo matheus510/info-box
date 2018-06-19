@@ -38,21 +38,39 @@ function loadPropriedadesMvc (vm) {
         vmScope.parametros.fontesRestritas = dados.fontesRestritas
         vmScope.parametros.noticiasSimilares = dados.noticiasSimilares
         vmScope.parametros.opcoes = dados.opcoes
-        if (vmScope.parametros.grifos && vmScope.noticiaAtual.Conteudo && vmScope.noticiaAtual.idMidia !== 3 && vmScope.noticiaAtual.idMidia !== 4) {
+        if (vmScope.parametros.grifos && vmScope.noticiaAtual.Conteudo && (vmScope.noticiaAtual.IdMidia && vmScope.noticiaAtual.IdMidia !== 3 && vmScope.noticiaAtual.IdMidia !== 4)) {
+          debugger
           vmScope.noticiaAtual.Conteudo = helpers.highlight(vmScope.noticiaAtual.Conteudo, vmScope.parametros.grifos)
         }
         if (vmScope.parametros.opcoes['OpcaoExposicaoMesa'] && vmScope.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
           Promise.resolve(services.common.getExposicao(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia, vmScope.noticiaAtual.IdMidia, vmScope.parametros.opcoes['centimetragemWeb']))
             .then((data) => {
               vmScope.noticiaAtual.exposicao = data
-              vmScope.items[3].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(14, vmScope.noticiaAtual.exposicao.Exposicao.length)
+              const midia = {
+                caracteresCortados: vmScope.noticiaAtual.IdMidia === 1 ? 33 : vmScope.noticiaAtual.IdMidia === 2 ? 10 : 14,
+                exposicao: vmScope.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vmScope.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Duração',
+                valoracao: 'Valoração',
+                audiencia: vmScope.noticiaAtual.IdMidia === 1 ? 'Visitas' : vmScope.noticiaAtual.IdMidia === 2 ? 'Tiragem' : 'Audiência',
+              }
+
+              vmScope.items[2].title = midia.audiencia
+              vmScope.items[3].title = midia.valoracao
+              vmScope.items[4].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(midia.caracteresCortados, vmScope.noticiaAtual.exposicao.Exposicao.length)
+              vmScope.items[4].title = midia.exposicao
             })
       }
       if (vmScope.parametros.opcoes['OpcaoExposicaoPorCanal'] && vmScope.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
-          Promise.resolve(services.common.getExposicaoCanal(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia, vmScope.parametros.idMidia))
+          Promise.resolve(services.common.getExposicaoCanal(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia, vmScope.parametros.IdMidia))
             .then((data) => {
               vmScope.noticiaAtual.exposicao = data
-              vmScope.items[3].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(14, vmScope.noticiaAtual.exposicao.Exposicao.length)
+              
+              const midia = {
+                caracteresCortados: vmScope.noticiaAtual.IdMidia === 1 ? 33 : vmScope.noticiaAtual.IdMidia === 2 ? 10 : 14,
+                titulo: vmScope.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vmScope.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Valoração'
+              }
+
+              vmScope.items[3].title = midia.titulo
+              vmScope.items[3].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(midia.caracteresCortados, vmScope.noticiaAtual.exposicao.Exposicao.length)
             })
       }
       if (vmScope.parametros.opcoes['OpcaoTiragemVisualizacaoBook']) {
@@ -69,7 +87,7 @@ function loadPropriedadesMvc (vm) {
               vmScope.items[2].value = vmScope.noticiaAtual.valoracao ? vmScope.noticiaAtual.valoracao : 'Informação não disponível' 
             })
       }
-      }, 2000, vmScope, dados)
+      }, 1000, vmScope, dados)
         })
     })
 }
@@ -119,10 +137,10 @@ function loadNoticia (vm) {
       vm.items[1].value = moment(vm.noticiaAtual.DataHora).format("DD/MM/YYYY")
       vm.loading = false
       if (vm.noticiaAtual.IdMidia === 1) {
-        loadWeb()
+        loadWeb(vm)
       }
       if (vm.noticiaAtual.IdMidia === 2) {
-        loadImpresso()
+        loadImpresso(vm)
       }
       if (vm.noticiaAtual.IdMidia === 3) {
         vm.noticiaAtual.audioSrc = `https://cloud.boxnet.com.br${vm.noticiaAtual.Anexos[0].Url}`
