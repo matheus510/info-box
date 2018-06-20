@@ -41,7 +41,6 @@
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1">
               <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'primary': 'secondary'" class="px-4" value="1">Leitura</v-btn>
               <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'primary': 'secondary'" class="px-4" value="2">Screenshot</v-btn>
-              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'primary': 'secondary'" class="px-4" value="3">Anexos</v-btn>
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 1">
               <v-card class="py-3 px-4 text-xs-left">
@@ -53,7 +52,9 @@
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <v-card-text class="py-3 justify">
-                  <span class="mx-4 px-4 subheading">{{ noticiaAtual.Conteudo }}</span>
+                  <div class="viewer" v-viewer>
+                    <img :src="noticiaAtual.screenshot" />
+                  </div>
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -262,10 +263,11 @@
       },
       loadWeb () {
         debugger
-        Promise.resolve(services.web.getScreenshot(this.parametros.idNoticia)).then((response) => {
-            this.noticiaAtual.screenshot = response.data
+        Promise.resolve(services.web.getScreenshot(this.parametros.idNoticia).then((response) => {
+            this.noticiaAtual.screenshot = response
             this.$forceUpdate()
           })
+        )
       },
       loadNoticia () {
         Promise.resolve(services.common.getNoticia(this.parametros.idProdutoMvc, this.parametros.idNoticia, false))
@@ -300,7 +302,7 @@
 <style>
 .viewer img{
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 mark {
   background-color: #ffff00;
