@@ -23,12 +23,6 @@
     <v-toolbar class="grey darken-3" fixed app>
       <v-toolbar-title v-text="title" class="white--text"></v-toolbar-title>
       <v-spacer></v-spacer>
-        <v-btn class="white--text" icon v-if="miniVariant === false" @click.stop="miniVariant = !miniVariant">
-          <v-icon>chevron_right</v-icon>
-        </v-btn>
-        <v-btn class="white--text" icon v-if="miniVariant === true" @click.stop="miniVariant = !miniVariant">
-          <v-icon>chevron_left</v-icon>
-        </v-btn>
     </v-toolbar>
     <v-content>
       <v-container grid-list-xl text-xs-center>
@@ -43,14 +37,14 @@
               <v-btn v-for="botao in parametros.botoes" :class="abaAtual === botao.valor ? 'white': 'secondary'" :key="botao.valor" @click="botao.click(botao)" class="px-4" :value="botao.valor">{{ botao.texto }}</v-btn>
             </v-flex>
             <!-- midia web -->
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 1">
+            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 5">
               <v-card class="py-3 px-4 text-xs-left">
                 <v-card-text class="justify">
                   <span v-html="noticiaAtual.Conteudo" class="mx-4 px-4 subheading"></span>
                 </v-card-text>
               </v-card>
             </v-flex>
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 2">
+            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 6">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
                   <img pre-load :src="noticiaAtual.screenshot" />

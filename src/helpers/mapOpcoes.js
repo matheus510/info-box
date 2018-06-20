@@ -108,11 +108,13 @@ export default function mapOpcoes (vm) {
     }
     if (vm.noticiaAtual.IdMidia === 1) {
       if (botao.id === 5 || botao.id === 6) {
+        if (vm.abaAtual !== 5) vm.abaAtual = 5
         return botao
       }
     }
     if ((vm.noticiaAtual.IdMidia === 3 || vm.noticiaAtual.IdMidia === 4)) {
       if ((botao.id === 5 && idsOpcoesEspeciais.indexOf(102) === -1)) {
+        if (vm.abaAtual !== 5) vm.abaAtual = 5
         return botao
       }
     }
