@@ -1,16 +1,15 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      :mini-variant.sync="miniVariant"
       permanent
       right
       app
       hide-overlay
-      
       v-model="miniVariant"
+      dark
     >
       <v-list two-line @click="miniVariant = !miniVariant">
-        <v-list-tile v-for="item in items" :key="item.title">
+        <v-list-tile v-for="item in items" :key="item.icon">
           <v-list-tile-avatar>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-avatar>
@@ -21,11 +20,15 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar fixed app>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
+    <v-toolbar class="grey darken-3" fixed app>
+      <v-toolbar-title v-text="title" class="white--text"></v-toolbar-title>
+
       <v-spacer></v-spacer>
-        <v-btn icon v-if="miniVariant === false" @click.stop="miniVariant = !miniVariant">
+        <v-btn class="white--text" icon v-if="miniVariant === false" @click.stop="miniVariant = !miniVariant">
           <v-icon>chevron_right</v-icon>
+        </v-btn>
+        <v-btn class="white--text" icon v-if="miniVariant === true" @click.stop="miniVariant = !miniVariant">
+          <v-icon>chevron_left</v-icon>
         </v-btn>
     </v-toolbar>
     <v-content>
@@ -39,32 +42,43 @@
             </v-flex>
             <!-- midia web -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1">
+<<<<<<< HEAD
               <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'primary': 'secondary'" class="px-4" value="1">Leitura</v-btn>
               <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'primary': 'secondary'" class="px-4" value="2">Screenshot</v-btn>
+=======
+              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'white': 'secondary'" class="px-4" value="1">Leitura</v-btn>
+              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'white': 'secondary'" class="px-4" value="2">Screenshot</v-btn>
+>>>>>>> 537625bbe725f725dbceef29c500bbac72f83db0
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 1">
               <v-card class="py-3 px-4 text-xs-left">
-                <v-card-text class="py-3 justify">
-                  <span class="mx-4 px-4 subheading">{{ noticiaAtual.Conteudo }}</span>
+                <v-card-text class="justify">
+                  <span v-html="noticiaAtual.Conteudo" class="mx-4 px-4 subheading"></span>
                 </v-card-text>
               </v-card>
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 2">
               <v-card class="py-3 px-4 text-xs-left">
+<<<<<<< HEAD
                 <v-card-text class="py-3 justify">
                   <div class="viewer" v-viewer>
                     <img :src="noticiaAtual.screenshot" />
                   </div>
                 </v-card-text>
+=======
+                <div class="viewer" v-viewer>
+                  <img :src="noticiaAtual.screenshot" />
+                </div>
+>>>>>>> 537625bbe725f725dbceef29c500bbac72f83db0
               </v-card>
             </v-flex>
             <!-- /midia web --> 
             <!-- midia impresso -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 2">
-              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'primary': 'secondary'" class="px-4" value="1">Matéria</v-btn>
-              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'primary': 'secondary'" class="px-4" value="2">Páginas</v-btn>
-              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'primary': 'secondary'" class="px-4" value="3">Capa</v-btn>
-              <v-btn @click="abaAtual = 4" :color="abaAtual === 4 ? 'primary': 'secondary'" class="px-4" value="4">texto</v-btn>
+              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'white': 'secondary'" class="px-4" value="1">Matéria</v-btn>
+              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'white': 'secondary'" class="px-4" value="2">Páginas</v-btn>
+              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'white': 'secondary'" class="px-4" value="3">Capa</v-btn>
+              <v-btn @click="abaAtual = 4" :color="abaAtual === 4 ? 'white': 'secondary'" class="px-4" value="4">Texto</v-btn>
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
@@ -99,30 +113,36 @@
             <!-- /midia impresso -->
             <!-- midia radio -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 3">
-              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'primary': 'secondary'" class="px-4" value="1">Matéria</v-btn>
-              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'primary': 'secondary'" class="px-4" value="2">Páginas</v-btn>
-              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'primary': 'secondary'" class="px-4" value="3">Capa</v-btn>
-              <v-btn @click="abaAtual = 4" :color="abaAtual === 4 ? 'primary': 'secondary'" class="px-4" value="4">texto</v-btn>
+              <audio controls>
+                <source :src="noticiaAtual.audioSrc" type="audio/mp3">
+              </audio>
             </v-flex>
-            <v-flex xs8 offset-xs2 v-if="abaAtual === 4 && noticiaAtual.IdMidia === 3">
+            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 3">
+              <v-card-title>
+                <span class="headline">Transcrição</span><br/>
+              </v-card-title>
               <v-card class="py-3 px-4 text-xs-left">
-                <v-card-text class="py-3 justify">
-                  <span class="mx-4 px-4 subheading">{{ noticiaAtual.Conteudo }}</span>
+                <v-card-text class="py-3">
+                  <span v-html="noticiaAtual.Conteudo" class="subheading"></span>
                 </v-card-text>
               </v-card>
             </v-flex>
             <!-- /midia radio -->
             <!-- midia tv -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 4">
-              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'primary': 'secondary'" class="px-4" value="1">Matéria</v-btn>
-              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'primary': 'secondary'" class="px-4" value="2">Páginas</v-btn>
-              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'primary': 'secondary'" class="px-4" value="3">Capa</v-btn>
-              <v-btn @click="abaAtual = 4" :color="abaAtual === 4 ? 'primary': 'secondary'" class="px-4" value="4">texto</v-btn>
+              <video controls width="320" height="240" style="background: #000;">
+                <source :src="noticiaAtual.videoSrc"
+                        type="video/mp4">
+                O seu navegador não suporta o elemento <code>video</code> do HTML5.
+              </video>
             </v-flex>
-            <v-flex xs8 offset-xs2 v-if="abaAtual === 4 && noticiaAtual.IdMidia === 4">
+            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 4">
               <v-card class="py-3 px-4 text-xs-left">
-                <v-card-text class="py-3 justify">
-                  <span class="justify">{{ noticiaAtual.Conteudo }}</span>
+                <v-card-title>
+                <span class="headline">Transcrição</span><br/>
+                </v-card-title>
+                <v-card-text class="py-3">
+                  <span v-html="noticiaAtual.Conteudo" class="subheading"></span>
                 </v-card-text>
               </v-card>
             </v-flex>
@@ -130,16 +150,18 @@
           </v-layout>
         </v-slide-y-transition>
       </v-container>
-      <canvas id="canvas"></canvas>
     </v-content>
-    <v-footer app>
-      <span>&copy; 2017</span>
+    <v-footer class="grey darken-3" app>
+      <v-layout row wrap justify-center>
+        <v-flex xs12 py-3 text-xs-center white--text>
+          &copy;2018 — <strong>Boxnet</strong>
+        </v-flex>
+      </v-layout>
     </v-footer>
   </v-app>
 </template>
 
 <script>
-  import services from './services/'
   import helpers from './helpers/'
   import moment from 'moment'
   moment.locale('pt-BR')
@@ -148,19 +170,19 @@
       return {
         items: [
           { icon: 'library_books', title: 'Visualizações', value: '12'},
-          { icon: 'calendar_today', title: 'Publicação', value: 0},
-          { icon: 'attach_money', title: 'Valor', value: '24.227,53'},
-          { icon: 'format_shapes', title: 'Centimetragem', value: '24.11'},
-          { icon: 'assessment', title: 'Audiência da matéria', value: '108'}
+          { icon: 'calendar_today', title: 'Publicação', value: ''},
+          { icon: 'assessment', title: 'Audiência', value: 'Valor não disponível'},
+          { icon: 'attach_money', title: 'Valoração', value: 'Valor não disponível'},
+          { icon: 'format_shapes', title: 'Exposição', value: 'Exposição não disponível'}
         ],
-        miniVariant: true,
-        title: 'info-view',
+        miniVariant: false,
+        title: 'BoxView',
         urlToken: '',
         stringParametros: '',
         arrayParametros: [],
         parametros: {},
         noticiaAtual: {},
-        abaAtual: 1,
+        abaAtual: 1
       }
     },
     computed: {
@@ -168,6 +190,7 @@
         return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm:ss a")
       }
     },
+<<<<<<< HEAD
     methods: {
       getParametrosMvc () {
         this.urlToken = window.location.href.split('=')[1]
@@ -290,12 +313,11 @@
         this.$viewer.show()
       }
     },
+=======
+>>>>>>> 537625bbe725f725dbceef29c500bbac72f83db0
     mounted () {
-      this.getParametrosMvc().then(() => {
-        this.loadPropriedadesMvc()
-        this.loadIdNoticiasBook()
-        this.loadNoticia()
-      })
+      const vm = this
+      helpers.init(vm)
     }
   }
 </script>

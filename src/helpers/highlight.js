@@ -1,4 +1,7 @@
 function highlight (conteudo, terms) {
+  if (!terms.length) {
+    return conteudo
+  }
   let newStr = ''
   
   if(terms && terms.length) {
