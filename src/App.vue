@@ -9,7 +9,7 @@
       dark
     >
       <v-list two-line @click="miniVariant = !miniVariant">
-        <v-list-tile v-for="item in items" :key="item.icon">
+        <v-list-tile v-for="item in items" :key="item.id">
           <v-list-tile-avatar>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-avatar>
@@ -22,7 +22,6 @@
     </v-navigation-drawer>
     <v-toolbar class="grey darken-3" fixed app>
       <v-toolbar-title v-text="title" class="white--text"></v-toolbar-title>
-
       <v-spacer></v-spacer>
         <v-btn class="white--text" icon v-if="miniVariant === false" @click.stop="miniVariant = !miniVariant">
           <v-icon>chevron_right</v-icon>
@@ -55,7 +54,7 @@
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
-                  <img :src="noticiaAtual.screenshot" />
+                  <img pre-load :src="noticiaAtual.screenshot" />
                 </div>
               </v-card>
             </v-flex>
@@ -71,7 +70,7 @@
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
                   <div v-for="imagem in parametros.listaPaginasRecorte" :key="imagem.Url">
-                    <img v-for="recorte in imagem.Recortes" :src="recorte.Url" :key="recorte.Url" />
+                    <img pre-load v-for="recorte in imagem.Recortes" :src="recorte.Url" :key="recorte.Url" />
                   </div>
                 </div>
               </v-card>
@@ -79,14 +78,14 @@
             <v-flex xs8 offset-xs2 v-if="abaAtual === 2 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
-                  <img v-for="imagem in parametros.listaPaginasRecorte" :src="imagem.Url" :key="imagem.Url" />
+                  <img pre-load v-for="imagem in parametros.listaPaginasRecorte" :src="imagem.Url" :key="imagem.Url" />
                 </div>
               </v-card>
             </v-flex>
             <v-flex xs8 offset-xs2 v-if="abaAtual === 3 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
-                  <img :src="noticiaAtual.capa.Url"/>
+                  <img pre-load :src="noticiaAtual.capa.Url"/>
                 </div>
               </v-card>
             </v-flex>
@@ -174,7 +173,7 @@
     },
     computed: {
       dataVeiculacao () {
-        return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm:ss a")
+        return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm a")
       }
     },
     mounted () {

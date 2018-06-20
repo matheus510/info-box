@@ -106,7 +106,7 @@ function getTiragem (idNoticia) {
 }
 
 function getValoracao (idProdutoMvc, idNoticia) {
-  return axiosInstance.get(`Valoracao/Get?idProdutoMvc=${idProdutoMvc}idNoticia=${idNoticia}`)
+  return axiosInstance.get(`Valoracao/Get?idProdutoMvc=${idProdutoMvc}&idNoticia=${idNoticia}`)
     .then(function (response) {
       return response.data
     })

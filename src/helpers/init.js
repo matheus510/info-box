@@ -1,7 +1,5 @@
 import services from '../services/'
 import helpers from '../helpers/'
-import moment from 'moment'
-moment.locale('pt-BR')
 
 export default function init (vm) {
   getParametrosMvc(vm).then(() => {
@@ -38,60 +36,14 @@ function loadPropriedadesMvc (vm) {
         vmScope.parametros.fontesRestritas = dados.fontesRestritas
         vmScope.parametros.noticiasSimilares = dados.noticiasSimilares
         vmScope.parametros.opcoes = dados.opcoes
+        vmScope.items = helpers.mapOpcoes(vm)
         if (vmScope.parametros.grifos && vmScope.noticiaAtual.Conteudo && (vmScope.noticiaAtual.IdMidia && vmScope.noticiaAtual.IdMidia !== 3 && vmScope.noticiaAtual.IdMidia !== 4)) {
-          debugger
           vmScope.noticiaAtual.Conteudo = helpers.highlight(vmScope.noticiaAtual.Conteudo, vmScope.parametros.grifos)
         }
-        if (vmScope.parametros.opcoes['OpcaoExposicaoMesa'] && vmScope.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
-          Promise.resolve(services.common.getExposicao(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia, vmScope.noticiaAtual.IdMidia, vmScope.parametros.opcoes['centimetragemWeb']))
-            .then((data) => {
-              vmScope.noticiaAtual.exposicao = data
-              const midia = {
-                caracteresCortados: vmScope.noticiaAtual.IdMidia === 1 ? 33 : vmScope.noticiaAtual.IdMidia === 2 ? 10 : 14,
-                exposicao: vmScope.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vmScope.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Duração',
-                valoracao: 'Valoração',
-                audiencia: vmScope.noticiaAtual.IdMidia === 1 ? 'Visitas' : vmScope.noticiaAtual.IdMidia === 2 ? 'Tiragem' : 'Audiência',
-              }
-
-              vmScope.items[2].title = midia.audiencia
-              vmScope.items[3].title = midia.valoracao
-              vmScope.items[4].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(midia.caracteresCortados, vmScope.noticiaAtual.exposicao.Exposicao.length)
-              vmScope.items[4].title = midia.exposicao
-            })
-      }
-      if (vmScope.parametros.opcoes['OpcaoExposicaoPorCanal'] && vmScope.parametros.opcoes['OpcaoCentimetragemVisualizacaoBook']) {
-          Promise.resolve(services.common.getExposicaoCanal(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia, vmScope.parametros.IdMidia))
-            .then((data) => {
-              vmScope.noticiaAtual.exposicao = data
-              
-              const midia = {
-                caracteresCortados: vmScope.noticiaAtual.IdMidia === 1 ? 33 : vmScope.noticiaAtual.IdMidia === 2 ? 10 : 14,
-                titulo: vmScope.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vmScope.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Valoração'
-              }
-
-              vmScope.items[3].title = midia.titulo
-              vmScope.items[3].value = vmScope.noticiaAtual.exposicao.Exposicao.substring(midia.caracteresCortados, vmScope.noticiaAtual.exposicao.Exposicao.length)
-            })
-      }
-      if (vmScope.parametros.opcoes['OpcaoTiragemVisualizacaoBook']) {
-          Promise.resolve(services.common.getTiragem(vmScope.parametros.idNoticia))
-            .then((data) => {
-              vmScope.noticiaAtual.tiragem = data
-              vmScope.items[4].value = vmScope.noticiaAtual.tiragem
-            })
-      }
-      if (vmScope.parametros.opcoes['OpcaoValoracaoVisualizacaoBook']) {
-          Promise.resolve(services.common.getValoracao(vmScope.parametros.idProdutoMvc, vmScope.parametros.idNoticia))
-            .then((data) => {
-              vmScope.noticiaAtual.valoracao = data
-              vmScope.items[2].value = vmScope.noticiaAtual.valoracao ? vmScope.noticiaAtual.valoracao : 'Informação não disponível' 
-            })
-      }
-      }, 1000, vmScope, dados)
-        })
+        }, 2000, vmScope, dados)
+      })
     })
 }
-
 function loadIdNoticiasBook (vm) {
   if (vm.parametros.idBook) {
     Promise.resolve(services.common.getIdNoticiasBook(vm.parametros.idBook))
@@ -129,13 +81,10 @@ function loadWeb (vm) {
       vmScope.$forceUpdate()
     }), vmScope)
 }
-
 function loadNoticia (vm) {
   Promise.resolve(services.common.getNoticia(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, false))
     .then((data) => {
       vm.noticiaAtual = data
-      vm.items[1].value = moment(vm.noticiaAtual.DataHora).format("DD/MM/YYYY")
-      vm.loading = false
       if (vm.noticiaAtual.IdMidia === 1) {
         loadWeb(vm)
       }
