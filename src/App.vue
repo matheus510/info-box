@@ -39,11 +39,10 @@
               <span class="body-2 mb-3">{{ noticiaAtual.NomeFonte }}</span><span class="body-2" v-if="noticiaAtual.NomeProgramaSecao">{{ ` | ${noticiaAtual.NomeProgramaSecao}` }}</span><br />
               <span class="body-2 mb-3">{{ dataVeiculacao }}</span>
             </v-flex>
-            <!-- midia web -->
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1">
-              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'white': 'secondary'" class="px-4" value="1">Leitura</v-btn>
-              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'white': 'secondary'" class="px-4" value="2">Screenshot</v-btn>
+            <v-flex xs8 offset-xs2>
+              <v-btn v-for="botao in parametros.botoes" :class="abaAtual === botao.valor ? 'white': 'secondary'" :key="botao.valor" @click="botao.click(botao)" class="px-4" :value="botao.valor">{{ botao.texto }}</v-btn>
             </v-flex>
+            <!-- midia web -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 1">
               <v-card class="py-3 px-4 text-xs-left">
                 <v-card-text class="justify">
@@ -60,12 +59,6 @@
             </v-flex>
             <!-- /midia web --> 
             <!-- midia impresso -->
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 2">
-              <v-btn @click="abaAtual = 1" :color="abaAtual === 1 ? 'white': 'secondary'" class="px-4" value="1">Matéria</v-btn>
-              <v-btn @click="abaAtual = 2" :color="abaAtual === 2 ? 'white': 'secondary'" class="px-4" value="2">Páginas</v-btn>
-              <v-btn @click="abaAtual = 3" :color="abaAtual === 3 ? 'white': 'secondary'" class="px-4" value="3">Capa</v-btn>
-              <v-btn @click="abaAtual = 4" :color="abaAtual === 4 ? 'white': 'secondary'" class="px-4" value="4">Texto</v-btn>
-            </v-flex>
             <v-flex xs8 offset-xs2 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
               <v-card class="py-3 px-4 text-xs-left">
                 <div class="viewer" v-viewer>
@@ -103,7 +96,7 @@
                 <source :src="noticiaAtual.audioSrc" type="audio/mp3">
               </audio>
             </v-flex>
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 3">
+            <v-flex xs8 offset-xs2 v-if="(noticiaAtual.IdMidia === 3) && !parametros.idsOpcoesEspeciais.indexOf(102)">
               <v-card-title>
                 <span class="headline">Transcrição</span><br/>
               </v-card-title>
@@ -122,7 +115,7 @@
                 O seu navegador não suporta o elemento <code>video</code> do HTML5.
               </video>
             </v-flex>
-            <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 4">
+            <v-flex xs8 offset-xs2 v-if="parametros.idsOpcoesEspeciais && (noticiaAtual.IdMidia === 4) && (parametros.idsOpcoesEspeciais.indexOf(102) === -1)">
               <v-card class="py-3 px-4 text-xs-left">
                 <v-card-title>
                 <span class="headline">Transcrição</span><br/>
@@ -179,6 +172,15 @@
     mounted () {
       const vm = this
       helpers.init(vm)
+      helpers.eventBus.$on('abaUpdate', (payload) => {
+        this.abaAtual = payload
+      })
+      helpers.eventBus.$on('grifosUpdate', () => {
+        helpers.highlight(this.noticiaAtual.Conteudo, this.parametros.grifos)
+      })
+      if (this.parametros.grifos && this.noticiaAtual.Conteudo && (this.noticiaAtual.IdMidia && this.noticiaAtual.IdMidia !== 3 && this.noticiaAtual.IdMidia !== 4)) {
+        this.noticiaAtual.Conteudo = helpers.highlight(this.noticiaAtual.Conteudo, this.parametros.grifos)
+      }
     }
   }
 </script>

@@ -1,5 +1,6 @@
 import services from '../services/'
 import helpers from '../helpers/'
+import eventBus from '../helpers/eventBus'
 
 export default function init (vm) {
   getParametrosMvc(vm).then(() => {
@@ -29,18 +30,20 @@ function loadPropriedadesMvc (vm) {
       vm.parametros.propriedadesMvc = data
       Promise.resolve(services.common.getDadosVisualizacao(vm.parametros.idNoticia, vm.parametros.idProdutoMvc, vm.parametros.idProduto))
         .then((data) => {
-      let vmScope = vm
       let dados = data          
       return setTimeout(function () {
-        vmScope.parametros.grifos = dados.grifos
-        vmScope.parametros.fontesRestritas = dados.fontesRestritas
-        vmScope.parametros.noticiasSimilares = dados.noticiasSimilares
-        vmScope.parametros.opcoes = dados.opcoes
-        vmScope.items = helpers.mapOpcoes(vm)
-        if (vmScope.parametros.grifos && vmScope.noticiaAtual.Conteudo && (vmScope.noticiaAtual.IdMidia && vmScope.noticiaAtual.IdMidia !== 3 && vmScope.noticiaAtual.IdMidia !== 4)) {
-          vmScope.noticiaAtual.Conteudo = helpers.highlight(vmScope.noticiaAtual.Conteudo, vmScope.parametros.grifos)
+        vm.parametros.grifos = dados.grifos
+        vm.parametros.fontesRestritas = dados.fontesRestritas
+        vm.parametros.noticiasSimilares = dados.noticiasSimilares
+        vm.parametros.opcoes = dados.opcoes
+        const info = helpers.mapOpcoes(vm)
+        vm.items = info.barraInformacoes
+        vm.parametros.botoes = info.botoesMapeados
+        vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
+        if (vm.parametros.grifos && vm.noticiaAtual.Conteudo && (vm.noticiaAtual.IdMidia && vm.noticiaAtual.IdMidia !== 3 && vm.noticiaAtual.IdMidia !== 4)) {
+          eventBus.$emit('grifosUpdate')
         }
-        }, 2000, vmScope, dados)
+        }, 2000, vm, dados)
       })
     })
 }
@@ -55,31 +58,31 @@ function loadIdNoticiasBook (vm) {
 function loadImpresso(vm) {
   vm.parametros.listaPaginasRecorte = []
   vm.parametros.listaIdsPaginas = []
-  const vmScope = vm
+
   Promise.resolve(services.impresso.getIdsPaginas(vm.parametros.idNoticia)
     .then((response) => {
-      vmScope.parametros.listaIdsPaginas = response.Paginas
-      vmScope.parametros.listaIdsPaginas.map((pagina, index) => {
+      vm.parametros.listaIdsPaginas = response.Paginas
+      vm.parametros.listaIdsPaginas.map((pagina, index) => {
         Promise.resolve(services.impresso.getPaginaComRecortes(pagina)
           .then((response) => {
-            vmScope.parametros.listaPaginasRecorte.push(response)
-            vmScope.$forceUpdate()
-          }), vmScope)
+            vm.parametros.listaPaginasRecorte.push(response)
+            vm.$forceUpdate()
+          }), vm)
       })
-      Promise.resolve(services.impresso.getCapa(vmScope.parametros.idNoticia)
+      Promise.resolve(services.impresso.getCapa(vm.parametros.idNoticia)
         .then((data) => {
-          vmScope.noticiaAtual.capa = data
-          vmScope.$forceUpdate()
-        }), vmScope)
+          vm.noticiaAtual.capa = data
+          vm.$forceUpdate()
+        }), vm)
     })
-  , vmScope)
+  , vm)
 }
 function loadWeb (vm) {
-  const vmScope = vm
+
   Promise.resolve(services.web.getScreenshot(vm.parametros.idNoticia).then((response) => {
-      vmScope.noticiaAtual.screenshot = response
-      vmScope.$forceUpdate()
-    }), vmScope)
+      vm.noticiaAtual.screenshot = response
+      vm.$forceUpdate()
+    }), vm)
 }
 function loadNoticia (vm) {
   Promise.resolve(services.common.getNoticia(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, false))
