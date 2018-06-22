@@ -40,6 +40,7 @@ function loadPropriedadesMvc (vm) {
         vm.infos = info.barraInformacoes
         vm.parametros.botoes = info.botoesMapeados
         vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
+        eventBus.$emit('parametrosAtualizados', vm)
         if (vm.parametros.grifos && vm.noticiaAtual.Conteudo && (vm.noticiaAtual.IdMidia && vm.noticiaAtual.IdMidia !== 3 && vm.noticiaAtual.IdMidia !== 4)) {
           eventBus.$emit('grifosUpdate')
         }
@@ -88,6 +89,8 @@ function loadNoticia (vm) {
   Promise.resolve(services.common.getNoticia(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, false))
     .then((data) => {
       vm.noticiaAtual = data
+      eventBus.$emit('noticiaAtualDefinida', vm)
+
       if (vm.noticiaAtual.IdMidia === 1) {
         loadWeb(vm)
       }
