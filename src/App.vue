@@ -1,53 +1,12 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-      permanent
-      right
-      app
-      hide-overlay
-      v-model="miniVariant"
-      dark
-    >
-      <v-list two-line @click="miniVariant = !miniVariant">
-        <v-list-tile v-for="item in items" :key="item.id">
-          <v-list-tile-avatar>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{ item.value }}</v-list-tile-sub-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-    </v-navigation-drawer>
-    <v-toolbar class="grey darken-3" fixed app>
-      <v-toolbar-title v-text="title" class="white--text"></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-tooltip bottom>
-        <v-btn slot="activator" target="_blank" :href="noticiaAtual.Url" fab small>
-          <v-icon>link</v-icon>
-        </v-btn>
-        <span>Link original</span>
-      </v-tooltip>
-      <v-tooltip bottom>
-        <v-btn slot="activator" target="_blank" :href="`http://pdf.boxnet.com.br/Geral/Imagem?idNoticia=${parametros.idNoticia}&idProdutoMvc=${parametros.idProdutoMvc}${noticiaAtual.IdMidia === 2 ? '&paginaCompleta=false' : ''}`" fab small>
-          <v-icon>vertical_align_bottom</v-icon>
-        </v-btn>
-        <span>Download da matéria</span>
-      </v-tooltip>
-    </v-toolbar>
+    <i-sideinfo :infos="infos"></i-sideinfo>
+    <i-toolbar :noticiaAtual="noticiaAtual" :parametros="parametros"></i-toolbar>
     <v-content>
       <v-container grid-list-xl text-xs-center>
         <v-slide-y-transition mode="out-in">
           <v-layout row wrap>
-            <v-flex xs8 offset-xs2 class="pb-4">
-              <span class="headline mb-3">{{ noticiaAtual.Titulo ? noticiaAtual.Titulo : noticiaAtual.TituloOriginal}}</span><br />
-              <span class="body-2 mb-3">{{ noticiaAtual.NomeFonte }}</span><span class="body-2" v-if="noticiaAtual.NomeProgramaSecao">{{ ` | ${noticiaAtual.NomeProgramaSecao}` }}</span><br />
-              <span class="body-2 mb-3">{{ dataVeiculacao }}</span>
-            </v-flex>
-            <v-flex xs8 offset-xs2>
-              <v-btn v-for="botao in parametros.botoes" :class="abaAtual === botao.valor ? 'white': 'secondary'" :key="botao.texto" @click="botao.click(botao)" class="px-4" :value="botao.valor">{{ botao.texto }}</v-btn>
-            </v-flex>
+            <i-headline :noticiaAtual="noticiaAtual" :parametros="parametros"></i-headline>
             <!-- midia web -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 5">
               <v-card class="py-3 px-4 text-xs-left">
@@ -148,12 +107,14 @@
 
 <script>
   import helpers from './helpers/'
-  import moment from 'moment'
-  moment.locale('pt-BR')
+  import IToolbar from './components/IToolbar.vue'
+  import ISideinfo from './components/ISideinfo.vue'
+  import IHeadline from './components/IHeadline.vue'
+  
   export default {
     data () {
       return {
-        items: [
+        infos: [
           { icon: 'library_books', title: 'Visualizações', value: '12'},
           { icon: 'calendar_today', title: 'Publicação', value: ''},
           { icon: 'assessment', title: 'Audiência', value: 'Valor não disponível'},
@@ -170,11 +131,6 @@
         abaAtual: 1
       }
     },
-    computed: {
-      dataVeiculacao () {
-        return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm a")
-      }
-    },
     mounted () {
       const vm = this
       helpers.init(vm)
@@ -187,6 +143,11 @@
       if (this.parametros.grifos && this.noticiaAtual.Conteudo && (this.noticiaAtual.IdMidia && this.noticiaAtual.IdMidia !== 3 && this.noticiaAtual.IdMidia !== 4)) {
         this.noticiaAtual.Conteudo = helpers.highlight(this.noticiaAtual.Conteudo, this.parametros.grifos)
       }
+    },
+    components: {
+      IToolbar,
+      ISideinfo,
+      IHeadline
     }
   }
 </script>

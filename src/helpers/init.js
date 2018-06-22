@@ -37,7 +37,7 @@ function loadPropriedadesMvc (vm) {
         vm.parametros.noticiasSimilares = dados.noticiasSimilares
         vm.parametros.opcoes = dados.opcoes
         const info = helpers.mapOpcoes(vm)
-        vm.items = info.barraInformacoes
+        vm.infos = info.barraInformacoes
         vm.parametros.botoes = info.botoesMapeados
         vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
         if (vm.parametros.grifos && vm.noticiaAtual.Conteudo && (vm.noticiaAtual.IdMidia && vm.noticiaAtual.IdMidia !== 3 && vm.noticiaAtual.IdMidia !== 4)) {
