@@ -10,6 +10,7 @@ export default function mapOpcoes (vm) {
     { id: 1, icon: 'library_books', title: 'Visualizações', value: ''},
     { id: 2, icon: 'calendar_today', title: 'Publicação', value: moment(vm.noticiaAtual.DataHora).format("DD/MM/YYYY")}
   ]
+  let idAtual = 3
   if(opcoes['OpcaoExposicaoMesa'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
     Promise.resolve(services.common.getExposicao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia, vm.parametros.opcoes['centimetragemWeb']))
       .then((data) => {
@@ -19,7 +20,8 @@ export default function mapOpcoes (vm) {
         const formattedExposicao = vm.noticiaAtual.exposicao ? vm.noticiaAtual.exposicao.Exposicao.substring(caracteresCortados, vm.noticiaAtual.exposicao.Exposicao.length) : null
         const formattedExposicaoLabel = vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Duração'
         if(formattedExposicao) {
-          barraInformacoes.push({ id: 3, icon: 'format_shapes',title: formattedExposicaoLabel,value: formattedExposicao})
+          barraInformacoes.push({ id: idAtual, icon: 'format_shapes',title: formattedExposicaoLabel,value: formattedExposicao})
+          idAtual += 1
         }
       })
   }
@@ -28,7 +30,8 @@ export default function mapOpcoes (vm) {
       .then((data) => {
         vm.noticiaAtual.exposicaoPorCanal = data
         if(data.length !== 0) {
-          barraInformacoes.push({ id: 4, icon:'assignment',title: vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Exposição' ,value:''})
+          barraInformacoes.push({ id: idAtual, icon:'assignment',title: vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Exposição' ,value:''})
+          idAtual += 1
         }
       })
   }
@@ -36,7 +39,8 @@ export default function mapOpcoes (vm) {
     Promise.resolve(services.common.getTiragem(vm.parametros.idNoticia))
       .then((data) => {
         vm.noticiaAtual.tiragem = data
-        barraInformacoes.push({ id: 5, icon:'file_copy',title: 'Tiragem' ,value: vm.noticiaAtual.tiragem})
+        barraInformacoes.push({ id: idAtual, icon:'file_copy',title: 'Tiragem' ,value: vm.noticiaAtual.tiragem})
+        idAtual += 1
       })
   }
   if(opcoes['OpcaoValoracaoVisualizacaoBook']) {
@@ -44,7 +48,8 @@ export default function mapOpcoes (vm) {
     .then((data) => {
       vm.noticiaAtual.valoracao = data
       vm.noticiaAtual.valoracao.map((valoracao, index) => {
-        barraInformacoes.push({ id: (index + 5), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: valoracao["Valoracao"] || '0,00'})
+        barraInformacoes.push({ id: (index + idAtual), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: valoracao["Valoracao"] || '0,00'})
+        idAtual += 1
       })
     })
   }

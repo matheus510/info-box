@@ -23,6 +23,18 @@
     <v-toolbar class="grey darken-3" fixed app>
       <v-toolbar-title v-text="title" class="white--text"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-tooltip bottom>
+        <v-btn slot="activator" target="_blank" :href="noticiaAtual.Url" fab small>
+          <v-icon>link</v-icon>
+        </v-btn>
+        <span>Link original</span>
+      </v-tooltip>
+      <v-tooltip bottom>
+        <v-btn slot="activator" target="_blank" :href="`http://pdf.boxnet.com.br/Geral/Imagem?idNoticia=${parametros.idNoticia}&idProdutoMvc=${parametros.idProdutoMvc}${noticiaAtual.IdMidia === 2 ? '&paginaCompleta=false' : ''}`" fab small>
+          <v-icon>vertical_align_bottom</v-icon>
+        </v-btn>
+        <span>Download da matéria</span>
+      </v-tooltip>
     </v-toolbar>
     <v-content>
       <v-container grid-list-xl text-xs-center>
@@ -34,7 +46,7 @@
               <span class="body-2 mb-3">{{ dataVeiculacao }}</span>
             </v-flex>
             <v-flex xs8 offset-xs2>
-              <v-btn v-for="botao in parametros.botoes" :class="abaAtual === botao.valor ? 'white': 'secondary'" :key="botao.valor" @click="botao.click(botao)" class="px-4" :value="botao.valor">{{ botao.texto }}</v-btn>
+              <v-btn v-for="botao in parametros.botoes" :class="abaAtual === botao.valor ? 'white': 'secondary'" :key="botao.texto" @click="botao.click(botao)" class="px-4" :value="botao.valor">{{ botao.texto }}</v-btn>
             </v-flex>
             <!-- midia web -->
             <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 5">
