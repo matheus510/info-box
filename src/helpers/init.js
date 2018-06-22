@@ -42,7 +42,6 @@ function loadPropriedadesMvc (vm) {
         vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
         eventBus.$emit('parametrosAtualizados')
         eventBus.$emit('grifosAtualizados')
-        console.log('evento emitido')
         }, 2000, vm, dados, eventBus)
       })
     })
