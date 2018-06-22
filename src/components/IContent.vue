@@ -95,7 +95,8 @@ import eventBus from '../helpers/eventBus.js'
 export default {
   props: ['parametros', 'noticiaAtual', 'abaAtual'],
   created () {
-    eventBus.$on('noticiaAtualDefinida', (vm) => vm.$forceUpdate)
+    eventBus.$on('noticiaAtualDefinida', () => this.$forceUpdate())
+    eventBus.$on('parametrosAtualizados', () => this.$forceUpdate())
   },
   components : {
     IHeadline

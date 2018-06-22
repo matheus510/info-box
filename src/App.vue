@@ -51,12 +51,9 @@
       helpers.eventBus.$on('abaUpdate', (payload) => {
         this.abaAtual = payload
       })
-      helpers.eventBus.$on('grifosUpdate', () => {
-        helpers.highlight(this.noticiaAtual.Conteudo, this.parametros.grifos)
-      })
-      if (this.parametros.grifos && this.noticiaAtual.Conteudo && (this.noticiaAtual.IdMidia && this.noticiaAtual.IdMidia !== 3 && this.noticiaAtual.IdMidia !== 4)) {
+      helpers.eventBus.$on('grifosAtualizados', () => {
         this.noticiaAtual.Conteudo = helpers.highlight(this.noticiaAtual.Conteudo, this.parametros.grifos)
-      }
+      })
     },
     components: {
       IToolbar,

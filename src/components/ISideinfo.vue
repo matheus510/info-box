@@ -7,6 +7,11 @@
       dark
     >
       <v-list two-line>
+        <v-list-tile>
+          <v-list-tile-content>
+            <img src="../../public/boxnet_logo.png" height="25px">
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile v-for="info in infos" :key="info.id">
           <v-list-tile-avatar>
             <v-icon>{{ info.icon }}</v-icon>

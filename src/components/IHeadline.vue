@@ -19,8 +19,8 @@ export default {
       return moment(this.noticiaAtual.DataHora).format("dddd, D MMMM YYYY, h:mm a")
     }
   },
-  created () {
-    eventBus.$on('parametrosAtualizados', (vm) => vm.$forceUpdate)
+  updated () {
+    eventBus.$on('parametrosAtualizados', () => this.$forceUpdate())
   }
 }
 </script>
