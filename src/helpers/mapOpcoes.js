@@ -25,16 +25,19 @@ export default function mapOpcoes (vm) {
         }
       })
   }
-  if(opcoes['OpcaoExposicaoPorCanal'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
+  // Api não está enviando informações coerentes
+  /* if(opcoes['OpcaoExposicaoPorCanal'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
     Promise.resolve(services.common.getExposicaoCanal(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia))
       .then((data) => {
         vm.noticiaAtual.exposicaoPorCanal = data
+        const caracteresCortados = vm.noticiaAtual.IdMidia === 1 ? 33 : vm.noticiaAtual.IdMidia === 2 ? 14 : 10
+        const formattedExposicao = vm.noticiaAtual.exposicaoPorCanal ? vm.noticiaAtual.exposicaoPorCanal.Exposicao.substring(caracteresCortados, vm.noticiaAtual.exposicaoPorCanal[0]..length) : null
         if(data.length !== 0) {
           barraInformacoes.push({ id: idAtual, icon:'assignment',title: vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Exposição' ,value:''})
           idAtual += 1
         }
       })
-  }
+  } */
   if(opcoes['OpcaoTiragemVisualizacaoBook']) {
     Promise.resolve(services.common.getTiragem(vm.parametros.idNoticia))
       .then((data) => {
@@ -48,7 +51,7 @@ export default function mapOpcoes (vm) {
     .then((data) => {
       vm.noticiaAtual.valoracao = data
       vm.noticiaAtual.valoracao.map((valoracao, index) => {
-        barraInformacoes.push({ id: (index + idAtual), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: valoracao["Valoracao"] || '0,00'})
+        barraInformacoes.push({ id: (index + idAtual), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: `R$ ${valoracao["Valoracao"]}, 00` || '0,00'})
         idAtual += 1
       })
     })

@@ -53,6 +53,7 @@
     <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 3">
       <audio controls>
         <source :src="noticiaAtual.audioSrc" type="audio/mp3">
+      O seu navegador não suporta o elemento <code>audio</code> do HTML5.
       </audio>
     </v-flex>
     <v-flex xs8 offset-xs2 v-if="(noticiaAtual.IdMidia === 3) && !parametros.idsOpcoesEspeciais.indexOf(102)">

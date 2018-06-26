@@ -30,7 +30,7 @@ export default {
   props: ['infos'],
   data () {
     return {
-      boxLogo: 'dist/ffb84f30f74316bc68d2fa8884c7632b.png'
+      boxLogo: 'public/boxnet_logo.png'
     }
   }
 }

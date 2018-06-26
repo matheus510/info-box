@@ -21,6 +21,7 @@ function getParametrosMvc (vm) {
       let nome = parametro.substr(0, parametro.indexOf('='))
       vm.parametros[nome] = parametro.substr(parametro.indexOf('=') + 1, parametro.length)
     })
+    //if (vm.parametros['IdBook'] || vm.parametros['idBook']) vm.
   })
 }
 function loadPropriedadesMvc (vm) {
