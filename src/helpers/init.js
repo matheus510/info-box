@@ -2,26 +2,25 @@ import services from '../services/'
 import helpers from '../helpers/'
 
 export default async function init (vm) {
-  await getParametrosMvc(vm)
-  loadIdNoticiasBook(vm)
-  
-  const propriedadesMvc = await loadPropriedadesMvc(vm)
-  vm.parametros.grifos = propriedadesMvc.grifos
-  vm.parametros.fontesRestritas = propriedadesMvc.fontesRestritas
-  vm.parametros.noticiasSimilares = propriedadesMvc.noticiasSimilares
-  vm.parametros.opcoes = propriedadesMvc.opcoes
-  
-  helpers.eventBus.$emit('grifosAtualizados')
+  getParametrosMvc(vm).then(() => {
+    loadIdNoticiasBook(vm)
+    loadNoticia(vm).then((data) => vm.noticiaAtual = data)
+    loadPropriedadesMvc(vm).then((dadosVisualizacao) => {
+      vm.parametros.grifos = dadosVisualizacao.grifos
+      vm.parametros.fontesRestritas = dadosVisualizacao.fontesRestritas
+      vm.parametros.noticiasSimilares = dadosVisualizacao.noticiasSimilares
+      vm.parametros.opcoes = dadosVisualizacao.opcoes
 
-  const noticiaAtual = await loadNoticia(vm)
-  vm.noticiaAtual = noticiaAtual
+      helpers.eventBus.$emit('grifosAtualizados')
 
-  const info = await helpers.mapOpcoes(vm)
-  vm.infos = info.barraInformacoes
-  vm.parametros.botoes = info.botoesMapeados
-  vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
-
-  helpers.eventBus.$emit('initCompleto')
+      helpers.mapOpcoes(vm).then((info) => {
+        vm.infos = info.barraInformacoes
+        vm.parametros.botoes = info.botoesMapeados
+        vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
+        helpers.eventBus.$emit('initCompleto')
+      })
+    })
+  })
 }
 
 async function getParametrosMvc (vm) {
@@ -87,20 +86,21 @@ function loadWeb (vm) {
       vm.$forceUpdate()
     }), vm)
 }
-async function loadNoticia (vm) {
-  let noticiaAtual = await services.common.getNoticia(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, false)
-
-  if (noticiaAtual.IdMidia === 1) {
-    loadWeb(vm)
-  }
-  if (noticiaAtual.IdMidia === 2) {
-    loadImpresso(vm)
-  }
-  if (noticiaAtual.IdMidia === 3) {
-    noticiaAtual.audioSrc = `https://cloud.boxnet.com.br${noticiaAtual.Anexos[0].Url}`
-  }
-  if (noticiaAtual.IdMidia === 4) {
-    noticiaAtual.videoSrc = `https://cloud.boxnet.com.br${noticiaAtual.Anexos[0].Url}`
-  }
-  return noticiaAtual
+function loadNoticia (vm) {
+  return services.common.getNoticia(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, false).then((data) => {
+    const noticiaAtual = data
+    if (noticiaAtual.IdMidia === 1) {
+      loadWeb(vm)
+    }
+    if (noticiaAtual.IdMidia === 2) {
+      loadImpresso(vm)
+    }
+    if (noticiaAtual.IdMidia === 3) {
+      noticiaAtual.audioSrc = `https://cloud.boxnet.com.br${noticiaAtual.Anexos[0].Url}`
+    }
+    if (noticiaAtual.IdMidia === 4) {
+      noticiaAtual.videoSrc = `https://cloud.boxnet.com.br${noticiaAtual.Anexos[0].Url}`
+    }
+    return noticiaAtual
+  })
 }
