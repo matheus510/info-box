@@ -4,13 +4,7 @@
     <i-sideinfo :infos="infos"></i-sideinfo>
     <i-bookview v-if="parametros.idBook" :noticiaAtual="noticiaAtual" :parametros="parametros" :abaAtual="abaAtual"></i-bookview>
     <i-singleview v-if="!parametros.idBook" :noticiaAtual="noticiaAtual" :parametros="parametros" :abaAtual="abaAtual"></i-singleview>
-    <v-footer class="grey darken-3" app>
-      <v-layout row wrap justify-center>
-        <v-flex xs12 py-3 text-xs-center white--text>
-          &copy;2018 — <strong>Boxnet</strong>
-        </v-flex>
-      </v-layout>
-    </v-footer>
+    <i-footer></i-footer>
   </v-app>
 </template>
 
@@ -20,6 +14,7 @@ import ISingleview from './ISingleview.vue'
 import IBookview from './IBookview.vue'
 import IToolbar from './IToolbar.vue'
 import ISideinfo from './ISideinfo.vue'
+import IFooter from './IFooter.vue'
 
 export default {
   data () {
@@ -56,6 +51,7 @@ export default {
     IBookview,
     IToolbar,
     ISideinfo,
+    IFooter
   }
 }
 </script>

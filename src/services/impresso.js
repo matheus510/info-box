@@ -40,7 +40,7 @@ function getCapa (idNoticia) {
 function getIdsPaginas (idNoticia) {
   return axiosInstance.get(`Impressos/GetIdsPaginasByIdNoticia?idNoticia=${idNoticia}`)
     .then(function (response) {
-      return response.data
+      return response.data.Paginas
     })
     .catch(function (error) {
       console.log('Erro ao carregar recortes')

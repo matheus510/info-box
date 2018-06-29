@@ -1,6 +1,12 @@
 <template>
   <v-layout row wrap>
     <i-headline :aba-atual="abaAtual" :noticiaAtual="noticiaAtual" :parametros="parametros"></i-headline>
+    <v-flex row wrap xs12>
+      <v-card transparent>
+        <v-btn color="primary" fab absolute top left><v-icon>chevron_left</v-icon></v-btn>
+        <v-btn color="primary" fab absolute top right><v-icon>chevron_right</v-icon></v-btn>
+      </v-card>
+    </v-flex>
     <!-- midia web -->
     <v-flex xs8 offset-xs2 v-if="noticiaAtual.IdMidia === 1 && abaAtual === 5">
       <v-card class="py-3 px-4 text-xs-left">
@@ -18,12 +24,10 @@
     </v-flex>
     <!-- /midia web --> 
     <!-- midia impresso -->
-    <v-flex xs8 offset-xs2 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
-      <v-card class="py-3 px-4 text-xs-left">
-        <div class="viewer" v-viewer>
-          <div v-for="imagem in parametros.listaPaginasRecorte" :key="imagem.Url">
-            <img pre-load v-for="recorte in imagem.Recortes" :src="recorte.Url" :key="recorte.Url" />
-          </div>
+    <v-flex xs12 v-if="abaAtual === 1 && noticiaAtual.IdMidia === 2">
+      <v-card class="py-3 px-4">
+        <div v-viewer class="viewer">
+          <img v-for="imagem in parametros.listaRecortesURL" :src="imagem.src" :key="imagem.src">
         </div>
       </v-card>
     </v-flex>
@@ -36,8 +40,11 @@
     </v-flex>
     <v-flex xs8 offset-xs2 v-if="abaAtual === 3 && noticiaAtual.IdMidia === 2">
       <v-card class="py-3 px-4 text-xs-left">
-        <div class="viewer" v-viewer>
+        <div v-if="noticiaAtual.capa !== undefined && noticiaAtual.capa.Url" class="viewer" v-viewer>
           <img pre-load :src="noticiaAtual.capa.Url"/>
+        </div>
+        <div v-if="noticiaAtual.capa === undefined && !noticiaAtual.capa.Url">
+          Capa não disponível
         </div>
       </v-card>
     </v-flex>
@@ -90,17 +97,23 @@
 </template>
 
 <script>
+import VueGallery from 'vue-gallery'
 import IHeadline from './IHeadline.vue'
 import eventBus from '../helpers/eventBus.js'
 
 export default {
+  data () {
+    return {
+    }
+  },
   props: ['parametros', 'noticiaAtual', 'abaAtual'],
   created () {
     eventBus.$on('noticiaAtualDefinida', () => this.$forceUpdate())
     eventBus.$on('parametrosAtualizados', () => this.$forceUpdate())
   },
   components : {
-    IHeadline
+    IHeadline,
+    VueGallery
   }
 }
 </script>

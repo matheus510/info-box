@@ -22,31 +22,17 @@ function criptografar (txt) {
     })
 }
 
-function getPropriedadesMvc (idProdutoMvc) {
-  return axiosInstance.get(`ProdutoMvc/GetPropriedadesMvc?id=${idProdutoMvc}`)
-    .then(function (response) {
-      return response.data
-    })
-    .catch(function (error) {
-      console.log('Erro ao carregar propriedades')
-      console.log(error)
-    })
+async function getPropriedadesMvc (idProdutoMvc) {
+  const propriedadesMvc = await axiosInstance.get(`ProdutoMvc/GetPropriedadesMvc?id=${idProdutoMvc}`)  
+  return propriedadesMvc.data
 }
 
-function getDadosVisualizacao (idNoticia, idProdutoMvc, idProduto) {
+async function getDadosVisualizacao (idNoticia, idProdutoMvc, idProduto) {
   let dados = {}
-  getGrifos(idNoticia, idProduto).then((data) => {
-    dados.grifos = data
-  })
-  getFontesRestritas().then((data) => {
-    dados.fontesRestritas = data
-  })
-  getNoticiasSimilares(idNoticia).then((data) => {
-    dados.noticiasSimilares = data
-  })
-  getOpcoesCliente(idProdutoMvc).then((data) => {
-    dados.opcoes = data
-  })
+  dados.grifos = await getGrifos(idNoticia, idProduto)
+  dados.fontesRestritas = await getFontesRestritas()
+  dados.noticiasSimilares = await getNoticiasSimilares(idNoticia)
+  dados.opcoes = await getOpcoesCliente(idProdutoMvc)
   return dados
 }
 
@@ -131,7 +117,9 @@ function registraAcessoNoticia (email, idNoticia, bookVersao) {
 function getGrifos (idNoticia, idProduto) {
   return axiosInstance.get(`grifo/GetPalavras?idProduto=${idProduto}&idNoticia=${idNoticia}`)
     .then(function (response) {
-      return response.data
+      return {
+        grifos: response.data
+      }
     })
     .catch(function (error) {
       console.log('Erro ao carregar grifos')
@@ -141,7 +129,9 @@ function getGrifos (idNoticia, idProduto) {
 function getFontesRestritas () {
   return axiosInstance.get(`FonteRestricaoExibicao/CacheFontesRestritas/`)
     .then(function (response) {
-      return response.data
+      return {
+        fontesRestritas: response.data
+      }
     })
     .catch(function (error) {
       console.log('Erro ao carregar fontes restritas')
@@ -151,7 +141,10 @@ function getFontesRestritas () {
 function getNoticiasSimilares (idNoticia) {
   return axiosInstance.get(`Noticia/GetNoticiasSimilares/${idNoticia}`)
     .then(function (response) {
-      return response.data
+      console.log('noticias Similares', response.data)
+      return {
+        noticiasSimilares: response.data
+      }
     })
     .catch(function (error) {
       console.log('Erro ao carregar noticias similares')
@@ -161,7 +154,9 @@ function getNoticiasSimilares (idNoticia) {
 function getOpcoesCliente (idProdutoMvc) {
   return axiosInstance.get(`ProdutoMvc/GetOpcoesVisualizacao?idProdutoMvc=${idProdutoMvc}`)
     .then(function (response) {
-      return response.data
+      return {
+        opcoes: response.data
+      }
     })
     .catch(function (error) {
       console.log('Erro ao carregar as opções de visualização')

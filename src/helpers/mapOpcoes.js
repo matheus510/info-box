@@ -3,27 +3,28 @@ import moment from 'moment'
 import eventBus from '../helpers/eventBus'
 moment.locale('pt-BR')
 
-export default function mapOpcoes (vm) {
+export default async function mapOpcoes (vm) {
   const opcoes = vm.parametros.opcoes
-  const idsOpcoesEspeciais = opcoes.Opcoes.map(opcao => opcao.Id)
+  let idsOpcoesEspeciais = []
+  if (opcoes.Opcoes && opcoes.Opcoes.length > 0) {
+    idsOpcoesEspeciais = opcoes.Opcoes.map((opcao) => {return opcao.Id})
+  }
   const barraInformacoes = [
     { id: 1, icon: 'library_books', title: 'Visualizações', value: ''},
     { id: 2, icon: 'calendar_today', title: 'Publicação', value: moment(vm.noticiaAtual.DataHora).format("DD/MM/YYYY")}
   ]
   let idAtual = 3
   if(opcoes['OpcaoExposicaoMesa'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
-    Promise.resolve(services.common.getExposicao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia, vm.parametros.opcoes['centimetragemWeb']))
-      .then((data) => {
-        vm.noticiaAtual.exposicao = data
+    debugger
+    vm.noticiaAtual.exposicao = await services.common.getExposicao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia, vm.parametros.opcoes['centimetragemWeb'])
 
-        const caracteresCortados = vm.noticiaAtual.IdMidia === 1 ? 33 : vm.noticiaAtual.IdMidia === 2 ? 14 : 10
-        const formattedExposicao = vm.noticiaAtual.exposicao ? vm.noticiaAtual.exposicao.Exposicao.substring(caracteresCortados, vm.noticiaAtual.exposicao.Exposicao.length) : null
-        const formattedExposicaoLabel = vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Duração'
-        if(formattedExposicao) {
-          barraInformacoes.push({ id: idAtual, icon: 'format_shapes',title: formattedExposicaoLabel,value: formattedExposicao})
-          idAtual += 1
-        }
-      })
+    const caracteresCortados = vm.noticiaAtual.IdMidia === 1 ? 33 : vm.noticiaAtual.IdMidia === 2 ? 14 : 10
+    const formattedExposicao = vm.noticiaAtual.exposicao ? vm.noticiaAtual.exposicao.Exposicao.substring(caracteresCortados, vm.noticiaAtual.exposicao.Exposicao.length) : null
+    const formattedExposicaoLabel = vm.noticiaAtual.IdMidia === 1 ? 'Caracteres' : vm.noticiaAtual.IdMidia === 2 ? 'Centimetragem' : 'Duração'
+    if(formattedExposicao) {
+      barraInformacoes.push({ id: idAtual, icon: 'format_shapes',title: formattedExposicaoLabel,value: formattedExposicao})
+      idAtual += 1
+    }
   }
   // Api não está enviando informações coerentes
   /* if(opcoes['OpcaoExposicaoPorCanal'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
@@ -39,21 +40,15 @@ export default function mapOpcoes (vm) {
       })
   } */
   if(opcoes['OpcaoTiragemVisualizacaoBook']) {
-    Promise.resolve(services.common.getTiragem(vm.parametros.idNoticia))
-      .then((data) => {
-        vm.noticiaAtual.tiragem = data
-        barraInformacoes.push({ id: idAtual, icon:'file_copy',title: 'Tiragem' ,value: vm.noticiaAtual.tiragem})
-        idAtual += 1
-      })
+    vm.noticiaAtual.tiragem = await services.common.getTiragem(vm.parametros.idNoticia)
+    barraInformacoes.push({ id: idAtual, icon:'file_copy',title: 'Tiragem' ,value: vm.noticiaAtual.tiragem})
+    idAtual += 1
   }
   if(opcoes['OpcaoValoracaoVisualizacaoBook']) {
-    Promise.resolve(services.common.getValoracao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia))
-    .then((data) => {
-      vm.noticiaAtual.valoracao = data
-      vm.noticiaAtual.valoracao.map((valoracao, index) => {
-        barraInformacoes.push({ id: (index + idAtual), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: `R$ ${valoracao["Valoracao"]}, 00` || '0,00'})
-        idAtual += 1
-      })
+    vm.noticiaAtual.valoracao =  await services.common.getValoracao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia)
+    vm.noticiaAtual.valoracao.map((valoracao) => {
+      barraInformacoes.push({ id: (idAtual), icon:'attach_money',title: `Valoração - ${valoracao["Nome"]}`,value: `R$ ${ valoracao["Valoracao"] ? valoracao["Valoracao"] : '0' },00` || '0,00'})
+      idAtual += 1
     })
   }
   
@@ -127,9 +122,16 @@ export default function mapOpcoes (vm) {
       }
     }
   })
-  return {
-    barraInformacoes,
-    botoesMapeados,
-    idsOpcoesEspeciais
+  if (idsOpcoesEspeciais.length > 0) {
+    return {
+      barraInformacoes,
+      botoesMapeados,
+      idsOpcoesEspeciais
+    }
+  } else {
+    return {
+      barraInformacoes,
+      botoesMapeados
+    }
   }
 }

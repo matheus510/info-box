@@ -3,6 +3,7 @@
 </template>
 
 <script>
+  require('vue-image-lightbox/dist/vue-image-lightbox.min.css')
   import IViewer from './components/IViewer.vue'
 
   export default {
