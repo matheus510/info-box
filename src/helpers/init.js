@@ -1,22 +1,27 @@
 import services from '../services/'
 import helpers from '../helpers/'
-import eventBus from '../helpers/eventBus'
 
 export default async function init (vm) {
   await getParametrosMvc(vm)
+  loadIdNoticiasBook(vm)
+  
   const propriedadesMvc = await loadPropriedadesMvc(vm)
-    vm.parametros.grifos = propriedadesMvc.grifos.grifos
-    vm.parametros.fontesRestritas = propriedadesMvc.fontesRestritas.fontesRestritas
-    vm.parametros.noticiasSimilares = propriedadesMvc.noticiasSimilares.noticiasSimilares
-    vm.parametros.opcoes = propriedadesMvc.opcoes.opcoes
-    vm.noticiaAtual = await loadNoticia(vm)
-    const info = await helpers.mapOpcoes(vm)
-    vm.infos = info.barraInformacoes
-    vm.parametros.botoes = info.botoesMapeados
-    vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
-    eventBus.$emit('parametrosAtualizados')
-    eventBus.$emit('grifosAtualizados')
-    loadIdNoticiasBook(vm)
+  vm.parametros.grifos = propriedadesMvc.grifos
+  vm.parametros.fontesRestritas = propriedadesMvc.fontesRestritas
+  vm.parametros.noticiasSimilares = propriedadesMvc.noticiasSimilares
+  vm.parametros.opcoes = propriedadesMvc.opcoes
+  
+  helpers.eventBus.$emit('grifosAtualizados')
+
+  const noticiaAtual = await loadNoticia(vm)
+  vm.noticiaAtual = noticiaAtual
+
+  const info = await helpers.mapOpcoes(vm)
+  vm.infos = info.barraInformacoes
+  vm.parametros.botoes = info.botoesMapeados
+  vm.parametros.idsOpcoesEspeciais = info.idsOpcoesEspeciais
+
+  helpers.eventBus.$emit('initCompleto')
 }
 
 async function getParametrosMvc (vm) {

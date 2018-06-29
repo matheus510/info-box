@@ -15,7 +15,6 @@ export default async function mapOpcoes (vm) {
   ]
   let idAtual = 3
   if(opcoes['OpcaoExposicaoMesa'] && opcoes['OpcaoCentimetragemVisualizacaoBook']) {
-    debugger
     vm.noticiaAtual.exposicao = await services.common.getExposicao(vm.parametros.idProdutoMvc, vm.parametros.idNoticia, vm.noticiaAtual.IdMidia, vm.parametros.opcoes['centimetragemWeb'])
 
     const caracteresCortados = vm.noticiaAtual.IdMidia === 1 ? 33 : vm.noticiaAtual.IdMidia === 2 ? 14 : 10

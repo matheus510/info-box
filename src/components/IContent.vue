@@ -108,8 +108,7 @@ export default {
   },
   props: ['parametros', 'noticiaAtual', 'abaAtual'],
   created () {
-    eventBus.$on('noticiaAtualDefinida', () => this.$forceUpdate())
-    eventBus.$on('parametrosAtualizados', () => this.$forceUpdate())
+    eventBus.$on('initCompleto', () => this.$forceUpdate())
   },
   components : {
     IHeadline,

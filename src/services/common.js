@@ -28,12 +28,12 @@ async function getPropriedadesMvc (idProdutoMvc) {
 }
 
 async function getDadosVisualizacao (idNoticia, idProdutoMvc, idProduto) {
-  let dados = {}
-  dados.grifos = await getGrifos(idNoticia, idProduto)
-  dados.fontesRestritas = await getFontesRestritas()
-  dados.noticiasSimilares = await getNoticiasSimilares(idNoticia)
-  dados.opcoes = await getOpcoesCliente(idProdutoMvc)
-  return dados
+  return {
+    grifos: await getGrifos(idNoticia, idProduto),
+    fontesRestritas: await getFontesRestritas(),
+    noticiasSimilares: await getNoticiasSimilares(idNoticia),
+    opcoes: await getOpcoesCliente(idProdutoMvc)
+  }
 }
 
 function getIdNoticiasBook (idBook) {
@@ -114,54 +114,21 @@ function registraAcessoNoticia (email, idNoticia, bookVersao) {
 }
 
 //BEGIN_non-exportable 
-function getGrifos (idNoticia, idProduto) {
-  return axiosInstance.get(`grifo/GetPalavras?idProduto=${idProduto}&idNoticia=${idNoticia}`)
-    .then(function (response) {
-      return {
-        grifos: response.data
-      }
-    })
-    .catch(function (error) {
-      console.log('Erro ao carregar grifos')
-      console.log(error)
-    })
+async function getGrifos (idNoticia, idProduto) {
+  let response = await axiosInstance.get(`grifo/GetPalavras?idProduto=${idProduto}&idNoticia=${idNoticia}`)
+  return response.data
 }
-function getFontesRestritas () {
-  return axiosInstance.get(`FonteRestricaoExibicao/CacheFontesRestritas/`)
-    .then(function (response) {
-      return {
-        fontesRestritas: response.data
-      }
-    })
-    .catch(function (error) {
-      console.log('Erro ao carregar fontes restritas')
-      console.log(error)
-    })
+async function getFontesRestritas () {
+  let response = await axiosInstance.get(`FonteRestricaoExibicao/CacheFontesRestritas/`)
+  return response.data
 }
-function getNoticiasSimilares (idNoticia) {
-  return axiosInstance.get(`Noticia/GetNoticiasSimilares/${idNoticia}`)
-    .then(function (response) {
-      console.log('noticias Similares', response.data)
-      return {
-        noticiasSimilares: response.data
-      }
-    })
-    .catch(function (error) {
-      console.log('Erro ao carregar noticias similares')
-      console.log(error)
-    })
+async function getNoticiasSimilares (idNoticia) {
+  let response = await axiosInstance.get(`Noticia/GetNoticiasSimilares/${idNoticia}`)
+  return response.data
 }
-function getOpcoesCliente (idProdutoMvc) {
-  return axiosInstance.get(`ProdutoMvc/GetOpcoesVisualizacao?idProdutoMvc=${idProdutoMvc}`)
-    .then(function (response) {
-      return {
-        opcoes: response.data
-      }
-    })
-    .catch(function (error) {
-      console.log('Erro ao carregar as opções de visualização')
-      console.log(error)
-    })
+async function getOpcoesCliente (idProdutoMvc) {
+  let response = await axiosInstance.get(`ProdutoMvc/GetOpcoesVisualizacao?idProdutoMvc=${idProdutoMvc}`)
+  return response.data
 }
 //END_non-exportable
 
